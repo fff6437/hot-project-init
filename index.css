@@ -201,3 +201,15 @@ a:active{
   color: red;
   padding-top: 100px;
 }
+
+#getMore{
+  border-radius: 10px;
+  background-color: skyblue;
+  color: #Fff;
+  padding: 15px 30px;
+  border-color: #fff;
+  text-align: center;
+  margin: auto;
+  display: block;
+  cursor: pointer;
+}

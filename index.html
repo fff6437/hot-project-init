@@ -86,16 +86,16 @@
             window.onscroll = function () {
                 //变量scrollTop是滚动条滚动时，距离顶部的距离
                 var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-                //变量windowHeight是可视区的高度
-                var windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
-                //变量scrollHeight是滚动条的总高度
-                var scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
-                //滚动条到底部的条件
-                if (scrollTop + windowHeight == scrollHeight) {
-                    //写后台加载数据的函数
-                    // console.log("距顶部" + scrollTop + "可视区高度" + windowHeight + "滚动条总高度" + scrollHeight);
-                    getStarList(props.urlKey, page);
-                }
+                // //变量windowHeight是可视区的高度
+                // var windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
+                // //变量scrollHeight是滚动条的总高度
+                // var scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+                // //滚动条到底部的条件
+                // if (scrollTop + windowHeight == scrollHeight) {
+                //     //写后台加载数据的函数
+                //     // console.log("距顶部" + scrollTop + "可视区高度" + windowHeight + "滚动条总高度" + scrollHeight);
+                //     getStarList(props.urlKey, page);
+                // }
                 if (scrollTop === 0) {
                     setShowBtn(false);
                 } else if (scrollTop > 200) {
@@ -104,7 +104,6 @@
             }
 
             useEffect(() => {
-                console.log(props.urlKey);
                 setData([]);
                 setPage(1);
                 setDataLoding(false);
@@ -184,7 +183,7 @@
                         <span onClick={() => { setError(false) }}>×</span>
                     </div>}
                 {showBtn && !error && <button id='backTop' onClick={backTop} type='button'>回到顶部</button>}
-                {!loading && getDataLoding && <div style={{ textAlign: 'center',color:'skyblue' }}>LOADING...</div>}
+                {!loading && <button id='getMore' disabled={getDataLoding} onClick={() => {getStarList(props.urlKey, page)}}>{getDataLoding ? 'LOADING...' : '加载更多'}</button>}
             </div>)
         }
         function App(props) {
