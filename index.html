@@ -27,9 +27,12 @@
             { name: 'Ruby', key: 'stars:%3E1+language:ruby' },
             { name: 'Java', key: 'stars:%3E1+language:java' },
             { name: 'CSS', key: 'stars:%3E1+language:css' },
-        ]
+        ];
         const Header = (props) => {
             let [checkedName, setCheckedName] = useState('All');
+            useEffect(() => {
+                setCheckedName(props.urlNmae);
+            }, [props.urlNmae])
             const getKeysInfo = (v) => {
                 if (v.name === checkedName) return;
                 setCheckedName(v.name);
@@ -38,7 +41,7 @@
             return (
                 <div className='header'>
                     {searchKeys.map((v, i) => {
-                        return <span key={i} className={`${checkedName === v.name ? 'checked' : ''} item`} onClick={() => getKeysInfo(v)}>{v.name}</span>
+                        return <a key={i} href={`#/popular/${v.name}`} className={`${checkedName === v.name ? 'checked' : ''} item`} onClick={() => getKeysInfo(v)}>{v.name}</a>
                     })}
                 </div>
             )
@@ -52,14 +55,13 @@
             let [errorInfo, setErrorInfo] = useState(null);
             const [showBtn, setShowBtn] = useState(false);
             const getStarList = (key, page, isMore = true) => {
-                if (getDataLoding)  return;
+                if (getDataLoding) return;
                 setDataLoding(true);
                 setPage(++page)
                 if (!isMore) {
                     setLoading(true)
                 }
                 axios.get(`https://api.github.com/search/repositories?q=${key}&sort=stars&order=desc&type=Repositories&page=${page}`).then(function (res) {
-                    console.log(res);
                     if (res.status === 200) {
                         if (isMore) {
                             setData([...data, ...res.data.items]);
@@ -69,7 +71,7 @@
                         }
                     }
                     setDataLoding(false);
-                }).catch((error) =>{ 
+                }).catch((error) => {
                     setDataLoding(false);
                     setLoading(false);
                     setErrorInfo(error.response.data.message);
@@ -96,18 +98,21 @@
                 }
                 if (scrollTop === 0) {
                     setShowBtn(false);
-                } else if (scrollTop > 200){
+                } else if (scrollTop > 200) {
                     setShowBtn(true);
                 }
             }
-            
+
             useEffect(() => {
+                console.log(props.urlKey);
                 setData([]);
                 setPage(1);
                 setDataLoding(false);
                 setLoading(false);
                 setError(false);
-                getStarList(props.urlKey, 0, false);
+                if (props.urlKey) {
+                    getStarList(props.urlKey, 0, false);
+                }
             }, [props.urlKey])
             return (<div className='list'>
                 {loading &&
@@ -130,64 +135,117 @@
                             </div>
                         </div>
                     </div>}
-                    { !error ? <div className='center'>{ data && data.map((v, i) => {
-                        const {
-                            forks,
-                            open_issues,
-                            stargazers_count,
-                            // name,
-                            owner: { avatar_url, login }
-                        } = v;
-                        return <div key={i} className='list-content'>
-                            <div className='ranking'>#{i + 1}</div>
-                            <div className='img'>
-                                <img src={avatar_url} alt="" />
-                            </div>
-                            <div className="list-name">{login}</div>
-                            <div className='list-info'>
-                                <i className="fa fa-user"
-                                    style={{
-                                        color: "green",
-                                        width: "20px",
-                                        marginRight: '5px',
-                                    }}></i>{login}</div>
-                            <div className='list-info'>
-                                <i className="fa fa-star"
-                                    style={{
-                                        color: "yellow",
-                                        width: "20px",
-                                        marginRight: '5px',
-                                    }}></i>{stargazers_count} stars</div>
-                            <div className='list-info'>
-                                <i className="fa fa-code-fork"
-                                    style={{
-                                        color: "blue",
-                                        width: "20px",
-                                        marginRight: '5px',
-                                    }}></i>{forks} forks</div>
-                            <div className='list-info'>
-                                <i className="fa fa-exclamation-triangle"
-                                    style={{
-                                        color: "pink",
-                                        width: "20px",
-                                        marginRight: '5px',
-                                    }}></i>{open_issues} open issues</div>
+                {!error ? <div className='center'>{data && data.map((v, i) => {
+                    const {
+                        forks,
+                        open_issues,
+                        stargazers_count,
+                        // name,
+                        owner: { avatar_url, login }
+                    } = v;
+                    return <div key={i} className='list-content'>
+                        <div className='ranking'>#{i + 1}</div>
+                        <div className='img'>
+                            <img src={avatar_url} alt="" />
                         </div>
-                    })} </div> :
+                        <div className="list-name">{login}</div>
+                        <div className='list-info'>
+                            <i className="fa fa-user"
+                                style={{
+                                    color: "green",
+                                    width: "20px",
+                                    marginRight: '5px',
+                                }}></i>{login}</div>
+                        <div className='list-info'>
+                            <i className="fa fa-star"
+                                style={{
+                                    color: "yellow",
+                                    width: "20px",
+                                    marginRight: '5px',
+                                }}></i>{stargazers_count} stars</div>
+                        <div className='list-info'>
+                            <i className="fa fa-code-fork"
+                                style={{
+                                    color: "blue",
+                                    width: "20px",
+                                    marginRight: '5px',
+                                }}></i>{forks} forks</div>
+                        <div className='list-info'>
+                            <i className="fa fa-exclamation-triangle"
+                                style={{
+                                    color: "pink",
+                                    width: "20px",
+                                    marginRight: '5px',
+                                }}></i>{open_issues} open issues</div>
+                    </div>
+                })} </div> :
                     error && <div className='errorModal'>
                         <p>{errorInfo ? errorInfo : '加载失败，请稍后再试...'}</p>
-                        <span onClick={() => {setError(false)}}>×</span>
+                        <span onClick={() => { setError(false) }}>×</span>
                     </div>}
-                    {showBtn && !error && <button id='backTop' onClick={backTop} type='button'>回到顶部</button>}
-                    {!loading && getDataLoding && <div style={{textAlign:'center'}}>LOADING...</div>}
+                {showBtn && !error && <button id='backTop' onClick={backTop} type='button'>回到顶部</button>}
+                {!loading && getDataLoding && <div style={{ textAlign: 'center',color:'skyblue' }}>LOADING...</div>}
             </div>)
         }
         function App(props) {
-            let [urlKey, setKey] = useState('stars:%3E1');
-            return <div id='root'>
-                <Header getStarList={(key) => setKey(key)} />
+            let [urlKey, setKey] = useState('');
+            const [urlNmae, setUrlNmae] = useState("All");
+            const [error, setError] = useState(false);
+            const getTag = () => {
+                const hash = window.location.hash.slice(2);
+                if (hash) {
+                    if (hash.indexOf("popular") > -1) {
+                        const keys = hash.slice(8);
+                        if (hash === 'popular') {
+                            setKey("stars:%3E1");
+                            setUrlNmae('All');
+                            return;
+                        }
+                        switch (keys) {
+                            case 'All':
+                                setKey("stars:%3E1");
+                                setUrlNmae('All');
+                                break;
+                            case 'Javascript':
+                                setKey("stars:%3E1+language:javascript");
+                                setUrlNmae('Javascript');
+                                break;
+                            case 'Ruby':
+                                setKey("stars:%3E1+language:ruby");
+                                setUrlNmae('Ruby');
+                                break;
+                            case 'Java':
+                                setKey("stars:%3E1+language:java");
+                                setUrlNmae('Java');
+                                break;
+                            case 'CSS':
+                                setKey("stars:%3E1+language:css");
+                                setUrlNmae('CSS');
+                                break;
+                            default:
+                                setError(true);
+                                break;
+                        }
+                    } else {
+                        setError(true);
+                    }
+                } else {
+                    setKey("stars:%3E1");
+                    setUrlNmae('All');
+                }
+            }
+            useEffect(() => {
+                getTag();
+            },[]);
+            useEffect(() => {
+                window.addEventListener("hashchange", () => {
+                    getTag();
+                });
+            });
+            return !error ? <div id='root'>
+                <Header getStarList={(key) => setKey(key)} urlNmae={urlNmae} />
                 <Content urlKey={urlKey} />
-            </div>
+            </div> : <div className='not-found'>404 Not Found</div>
         }
 
         ReactDOM.render(

@@ -1,14 +1,25 @@
+a{
+  text-decoration: none;
+  color: rgba(0,0,0,0.65);
+}
+a:hover{
+  color: #1890ff;
+}
+a:active{
+  color: #1890ff;
+}
+
 .header {
   width: 100%;
   text-align: center;
 }
-.header span {
+.header a {
   padding: 0 25px;
   cursor: pointer;
   font-weight: 600;
 }
 .header .checked {
-  color: red;
+  color: #1890ff;
 }
 .list {
   padding: 0 200px;
@@ -182,4 +193,11 @@
   top: 5px;
   right: 10px;
   cursor: pointer;
+}
+
+
+.not-found{
+  text-align: center;
+  color: red;
+  padding-top: 100px;
 }
