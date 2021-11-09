@@ -161,7 +161,7 @@ let { useState, useEffect } = React;
                         <span onClick={() => { setError(false) }}>×</span>
                     </div>}
                 {showBtn && !error && <button id='backTop' onClick={backTop} type='button'>回到顶部</button>}
-                {!loading && <button id='getMore' disabled={getDataLoding} onClick={() => {getStarList(props.urlKey, page)}}>{getDataLoding ? 'LOADING...' : '加载更多'}</button>}
+                {!loading && !error && data.length > 0 && <button id='getMore' disabled={getDataLoding} onClick={() => {getStarList(props.urlKey, page)}}>{getDataLoding ? 'LOADING...' : '加载更多'}</button>}
             </div>)
         }
         function App(props) {
